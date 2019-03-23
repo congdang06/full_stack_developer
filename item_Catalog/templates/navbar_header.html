@@ -1,0 +1,56 @@
+<nav class="navbar navbar-default well-md header">
+  <div class="container-fluid">
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand sport-brand" href="{{url_for('showCatalogs')}}">Sports Catalog</a>
+    </div>
+
+
+    <!-- Collect the nav links, forms, and other content for toggling -->
+    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+    {% if 'username' in session %}
+      <ul class="nav navbar-nav">
+        
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle cat-drop" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Catalogs <span class="caret"></span></a>
+          <ul class="dropdown-menu">
+            {% for c in catalogs %}
+                <li>
+                    <a href="{{ url_for('showSpecificCategoryItems', catalog_id=c.id) }}">{{c.name}} 
+                    </a>
+                </li>
+            {% endfor %}
+            <li role="separator" class="divider"></li>
+            <li><a href="{{ url_for('newCatalog') }}"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span>Add New Categories</a></li>
+            <li><a href="{{ url_for('newItemCatalog')}}"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span>Add New Categories Items</a></li>
+            
+          </ul>
+        </li>
+      </ul>
+    {% endif %}
+      
+      <ul class="nav navbar-nav navbar-right login">
+        {% if 'username' not in session %}
+            <li><a href="{{url_for('showLogin')}}">
+                <span class="glyphicon glyphicon-log-in" aria-hidden="true"></span>
+                    Login</a></li>
+        {% else %}
+            <li>
+                
+                <a href="{{url_for('logout')}}"><span class="glyphicon glyphicon-log-out" aria-hidden="True"></span>Logout</a></li>
+        {% endif %} 
+        
+      </ul>
+    </div><!-- /.navbar-collapse -->
+  </div><!-- /.container-fluid -->
+
+</nav>
+
+
+{% include "jumbotron.html" %}

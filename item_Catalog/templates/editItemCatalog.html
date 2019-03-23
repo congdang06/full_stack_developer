@@ -1,0 +1,60 @@
+{% extends "main_layout.html" %}
+
+{% block content %}
+    <h3 class='catalog_header'>edit categories items </h3>
+    <div class="panel panel-default ">
+        <div class="panel-body new_catalog">
+            <div class="col-md-12">
+                <div class="row">
+                    <form method="post" class="form-horizontal">
+                        <div class="form-group">
+                                <label for="name" class="col-md-2 control-label">Name: </label>
+                                <div class='col-md-9'>
+                                    <input type="text" class="form-control" maxlength="50" placeholder="Enter update categories items name" name="name" value="{{item.name}}"><br>
+                                </div>
+                       
+                                <label for="description" class="col-md-2 control-label">Description:</label>
+                                <div class="col-md-9">
+                                    <textarea class="form-control" maxlength="400" rows="5" name="description" placeholder="Enter categories items description">{{item.description}}</textarea><br>
+                                </div>
+
+                               <label for="catalog" class="col-md-2 control-label">Selected Categories:</label>
+
+                               <div class="col-md-9">
+                                    <select class="form-control" name="catalog">
+                                        {% for c in catalogs %}
+                                            {% if c.user_id == session.user_id %}
+                                                <option id="{{c.id}}" value="{{c.id}}">
+                                                    {{c.name}}
+                                                </option>
+                                            {% endif %}
+                                        {% endfor %}
+
+                                    </select><br>
+                                </div>
+
+                                <div class="form-group ">
+                                    <div class="col-sm-offset-2 col-md-10">
+                                        <button type="submit" class="btn btn-success btn-md" id="submit">
+                                            <span class="glyphicon glyphicon-eye-open area-hidden="true"></span>
+                                            Update Items
+                                        </button>
+
+                                        <button class="btn btn-info btn-md">
+                                            <span class="glyphicon glyphicon-eye-close area-hidden="true"></span>
+                                            <a href="{{ url_for('showCatalogs') }}">
+                                            Back to list </a>
+                                        </button>
+                                    </div>
+                                </div>
+
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+
+{% endblock %}

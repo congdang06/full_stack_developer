@@ -1,0 +1,16 @@
+{% extends "main_layout.html" %}
+
+
+{% block content %}
+  
+<div class="container-fluid">
+    <div class="row">
+
+        {% include "flash_alert_message.html" %}
+        {% include "display_categories.html" %}
+        {% include "display_latest_items.html" %}
+        
+    </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,15 @@
+<div class='flash'>
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        <uL class="messages">
+            {% for message in messages %}
+                <li  >
+                    <a href="#" class="close" data-dismiss="alert" aria-label="close">&times; </a>
+                    <strong>{{message}} </strong>
+                </li>
+            {% endfor %}
+        </uL>
+        {% endif %}
+    {% endwith %}
+
+</div>

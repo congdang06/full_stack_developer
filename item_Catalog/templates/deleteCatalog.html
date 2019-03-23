@@ -1,0 +1,20 @@
+{% extends "main_layout.html" %}
+
+{% block content %}
+
+<h2 class="delete_message">Are you sure you want to delete {{ catalog.name}}?</h2>
+
+<form action= "{{url_for('deleteCatalog', catalog_id=catalog.id)}}" method="post">
+    <button type="submit" class="btn btn-danger" id="submit" aria-label="Left Align">
+        <span class="glyphicon glyphicon-trash" aria-hidden="true">Delete</span>
+    </button>
+
+    <a href="{{url_for('showCatalogs') }}">
+        <button type='button' class="btn btn-default" aria-label="Left Aling">
+            <span class="glyphicon glyphicon-cancel" aria-hidden="true">Cancel</span>
+        </button>
+    </a>
+
+</form>
+
+{% endblock %}

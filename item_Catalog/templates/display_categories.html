@@ -1,0 +1,70 @@
+
+{% block content %}
+<div class="col-md-4">
+    {% if 'username' in session %}
+        <h3 class="categories">Categories </h3>
+            <a href="{{ url_for('newCatalog') }}">
+                <button class="btn btn-primary btn-md add_button" aria-label='Left Align' >
+                    <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+                    Add new Categories 
+                </button></a>
+    {% else %}
+        <h3 class="categories">Categories</h3>
+    {% endif %}
+</div>
+</div>
+
+{% if 'username' in session %}
+    <ul class="list-group col-md-4 categories_list">
+        {% if count_categories >0 %}
+            {% for catalog in catalogs %} 
+                <li class="list-group-item categories_list">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <a href="{{url_for('showSpecificCategoryItems', catalog_id=catalog.id)}}">
+                                         <h4>{{ catalog.name }}</h4>       
+                            </a>
+                      
+                            {% if catalog.user_id == session.user_id %}
+                                <a href="{{url_for('editCatalog', catalog_id=catalog.id, item_catalog_id=catalog.id) }}">
+                                    <button class="btn btn-success btn-sm edit_button" aria-label="Left Align">
+                                        <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
+                                        Edit 
+                                    </button>
+                                   
+                                </a>
+                                <a href="{{ url_for('deleteCatalog', catalog_id=catalog.id, item_catalog_id=catalog.id) }}">
+                                    <button class="btn btn-warning btn-sm delete_button" aria-label="Left Align">
+                                        <span class="glyphicon glyphicon-delete" aria-hidden="true"></span>
+                                        Delete 
+                                    </button>
+                                </a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </li>
+            {% endfor %}
+        {% else %}
+            <h3 class="no-item">Categories and Items are emptied </h3>
+        {% endif %}
+    </ul>
+{% else %}
+    <ul class="list-group col-md-4 categories_list"> 
+        {% for catalog in catalogs %} 
+            <li class="list-group-item categories_list">
+                <div class="row">
+                    <div class="col-md-12">
+                        <a href="{{url_for('showSpecificCategoryItems', catalog_id=catalog.id)}}">
+                                     <h4>{{ catalog.name }}</h4>       
+                        </a>
+                    </div>
+                </div>
+            </li>
+
+        {% endfor %}
+    </ul>
+{% endif %}
+
+
+{% endblock %}
+

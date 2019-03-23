@@ -1,0 +1,65 @@
+{% block content %}
+
+<div class="col-md-5 ">
+{% if 'username' in session %}
+    <h3 class="latest_items">Latest Items </h3>
+        <a href="{{ url_for('newItemCatalog') }}">
+            <button class="btn btn-primary btn-md add_button" aria-label='Left Align' >
+                <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+                Add new catalog items 
+            </button></a>
+{% else %}
+    <h3 class="out-latest-item">Latest Items</h3>
+{% endif %}
+</div>
+
+
+{% if 'username' in session %}
+   l></p> <div class="col-md-8 ">
+        {% for i in items %}
+            <ul class="list-group">
+                <li class="list-group-item categories_list">
+                    <a href="{{url_for('showItemCatalog', catalog_id=i.catalog_id, item_catalog_id=i.id)}}">
+                        <p>{{ i.name }}</a>&nbsp<small>({{i.catalog.name}})</small>
+                
+                    {% if i.user_id == session.user_id %}
+                        <a href="{{url_for('editItemCatalog', catalog_id=i.catalog_id, item_catalog_id=i.id) }}">
+                                <button class="btn btn-success btn-sm edit_button" aria-label="Left Align">
+                                    <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
+                                    Edit 
+                                </button>
+                               
+                            </a>
+                            <a href="{{ url_for('deleteItemCatalog', catalog_id=i.catalog_id, item_catalog_id=i.id) }}">
+                                <button class="btn btn-warning btn-sm delete_button" aria-label="Left Align">
+                                    <span class="glyphicon glyphicon-delete" aria-hidden="true"></span>
+                                    Delete 
+                                </button>
+                            </a>
+                    {% endif %}
+                    
+                    {% if creator %}
+                        <div class='pull-right'>
+                            Created by: {{ creator.email }}
+                        </div> 
+                    {% endif %}
+                </li>
+            </ul>
+        {% endfor %}
+    </div>
+{% else %}
+    <div class="col-md-8 ">
+        {% for i in items %}
+            <ul class="list-group">
+                <li class="list-group-item categories_list">
+                    <a href="{{url_for('showItemCatalog', catalog_id=i.catalog_id, item_catalog_id=i.id)}}">
+                        <p>{{ i.name }}</a>&nbsp<small>({{i.catalog.name}})</small></p>
+                    </a>
+                </li>
+            </ul>
+        {% endfor %}
+    </div>
+{% endif %}
+
+
+{% endblock %}

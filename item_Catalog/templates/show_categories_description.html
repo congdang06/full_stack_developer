@@ -1,0 +1,74 @@
+{% extends "main_layout.html" %}
+
+{% block content %}
+
+<div class="container-fluid">
+    <div class="row">
+        {% include "display_categories.html" %}
+
+    <div class="col-md-5 ">
+        {% if item.user_id == session.user_id %}
+            <h3 class="latest_items">{{catalog.name }} Items (<b>{{count_categories}}</b> item) </h3>
+                <a href="{{ url_for('newItemCatalog') }}">
+                    <button class="btn btn-primary btn-md add_button" aria-label='Left Align' >
+                        <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+                        Add new catalog items 
+                    </button></a>
+        {% else %}
+           <h3 class="latest_items">{{catalog.name }} Items (<b>{{count_categories}}</b> item)</h3>
+        {% endif %}
+    </div>
+
+    <div class="col-md-8 specific"> 
+        <h3 class="categories">{{item.name}} <small>({{catalog.name}})</h3>
+        <p class="item_description">{{item.description}}</p>
+
+        {% if item.user_id == session.user_id %}
+            <a href="{{url_for('editItemCatalog', catalog_id=item.catalog_id, item_catalog_id=item.id) }}">
+                    <button class="btn btn-success btn-sm edit_button" aria-label="Left Align">
+                        <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
+                        Edit 
+                    </button>
+                   
+                </a>
+                <a href="{{ url_for('deleteItemCatalog', catalog_id=item.catalog_id, item_catalog_id=item.id) }}">
+                    <button class="btn btn-warning btn-sm delete_button" aria-label="Left Align">
+                        <span class="glyphicon glyphicon-delete" aria-hidden="true"></span>
+                        Delete 
+                    </button>
+                </a>
+        {% endif %}
+
+    <div class="listing_specific"">
+        {% for i in items %}
+        <ul class="list-group">
+            <li class="list-group-item categories_list">
+                <a href="{{ url_for('showItemCatalog', catalog_id=i.catalog_id, item_catalog_id=i.id) }}">
+                <p>{{i.name}} (<small>{{i.catalog.name}}</small>)</p>
+                </a>
+
+                 {% if item.user_id == session.user_id %}
+                    <a href="{{url_for('editItemCatalog', catalog_id=item.catalog_id, item_catalog_id=item.id) }}">
+                    <button class="btn btn-success btn-sm edit_button" aria-label="Left Align">
+                         <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
+                    Edit 
+                    </button>
+               
+                     </a>
+                    <a href="{{ url_for('deleteItemCatalog', catalog_id=item.catalog_id, item_catalog_id=item.id) }}">
+                        <button class="btn btn-warning btn-sm delete_button" aria-label="Left Align">
+                            <span class="glyphicon glyphicon-delete" aria-hidden="true"></span>
+                            Delete 
+                        </button>
+                    </a>
+                {% endif %}
+            </li>
+        </ul>
+    {% endfor %}
+    </div>
+
+    </div>
+
+</div>
+
+{% endblock %}
