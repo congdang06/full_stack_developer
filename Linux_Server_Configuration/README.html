@@ -1,0 +1,290 @@
+
+
+<h2>Step 1: Create account at AWS Lightsail(Virtual Server)</h2>
+    <h3>Start on Lightsail</h3>
+    <ol start="1">
+        <li> open <a href="https://aws.amazon.com/lightsail/">AWS Lightsail</a></li>
+        <li><b>Log in</b></li>
+        <p>First, log in to Lightsail. If you don't already have an Amazon Web Services account, you'll be prompted to create one.</p>
+        <img src="picture/create_instance.png" width="600" height="200" alt="AWS login page" >
+        <li><b>Create an instance</b></li>
+        <p>Once you're logged in, Lightsail will give you a friendly message with a robot on it, prompting you to create an instance. A Lightsail instance is a Linux server running on a virtual machine inside an Amazon datacenter.</p>
+        <img src='picture/no_instance.png' width="600", heigh="200" alt="no instance">
+        <li><b>Choose an instance image: Ubuntu</b></li>
+        <p>Lightsail supports a lot of different instance types. An instance image is a particular software setup, including an operating system and optionally built-in applications.</p>
+
+        <p>For this project, you'll want a plain Ubuntu Linux image. There are two settings to make here. First, choose "OS Only" (rather than "Apps + OS"). Second, choose Ubuntu as the operating system.</p>
+        <img src='picture/pick_ubuntu.png' width="600", heigh="200" alt="pick ubuntu">
+        <li><b>Choose your instance plan</b></li>
+        <p>The instance plan controls how powerful of a server you get. It also controls how much money they want to charge you. For this project, the lowest tier of instance is just fine. And as long as you complete the project within a month and shut your instance down, the price will be zero.</p>
+        <img src='picture/choose_plan.png' width="600", heigh="200" alt="choose plan">
+        <li><b>Give your instance a hostname</b></li>
+        <li>Every instance needs a unique hostname. You can use any name you like, as long as it doesn't have spaces or unusual characters in it. Your instance's name will be visible to you and to the project reviewer.</li>
+        <img src='picture/host_name.png' width="600", heigh="200" alt="hostname">
+        <li><b>Wait for it to start up</b></li>
+        <p>It may take a few minutes for your instance to start up.</p>
+        <img src='picture/start_up.png' width="600", heigh="200" alt="startup">
+        <li><b>Running</b></li>
+        <p>Once your instance has started up, you can log into it with SSH from your browser.</p>
+
+        <p>The public IP address of the instance is displayed along with its name. In the above picture it's 54.84.49.254.</p>
+
+        <p>Note: When you set up OAuth for your application, you will need a DNS name that refers to your instance's IP address. You can use the xip.io service to get one; this is a public service offered for free by Basecamp. For instance, the DNS name 54.84.49.254.xip.io refers to the server above.</p>
+        <img src='picture/connect_ubuntu.png' width="600", heigh="200" alt="startup">
+    </ol>
+
+
+    <h1>STEP 2: AWS Lightsail download the private key to local machine</h1>
+    <ol start="1">
+        <li>On the top right corner, click the <i>Account</i></li>
+        <li>Select SSH keys and click <b><i>Create New</i></b></li>
+        <img src='picture/ssh_private_key.png' width="600", heigh="200" alt="ssh private key">
+        <li>Download the private key which have <b>.pem</b> extension</li>
+        <li>On the local machine, move this private key to ~/.ssh with the new name <b>udacity_key.rsa</b>
+            <p>cp ~/Downloads/lightsail_private_key.pem ~/.ssh/udacity_key.rsa</p>
+            <p>ls ~/.ssh</p>
+        <li>Change the permission of udacity_key.rsa to prevent any users are able to modify it
+            <p>chmod 600 ~/.ssh/udacity_key.rsa </p>
+            <p>ls -la ~/.ssh/udacity_key.rsa </p>
+        <li>Testing the connection from <b>Local Machine</b> to <b>AWS lightsaile</b>
+            ssh -i ~/.ssh/udacity_key.rsa ubuntu@34.219.190.194
+
+            <p>You will receive the warning "Are you sure you want to continue connecting(yes/no)?" Answer <b>"Yes"</b></p>
+
+            <p>If you recieve this error warning <b>Permission Denied (publickey)</b></p>
+            <p> Please follow the <b>Step 3</b> to finish the configuration</p>
+        </li>
+
+    <h1>STEP 3: Update UBUNTU security, change port, configure UFW <b>(Connect to SSH on the virtual server AWS Lightsail) </b></h1>
+    <ol start="1">
+    <li><h3>Secure ubuntu server</h3></li>
+        <ol start="1">
+            <li>sudo apt-get update</li>
+            <li>sudo apt-get upgrade</li>
+            <li>sudo apt autoremove </li>
+            <li>sudo apt-get install finger</li>
+            <p>Auto update the package</p>
+                <li> sudo dpkg-reconfigure --priority=low unattended-upgrades</li>
+        </ol><br>
+    <li>Edit <b>sshd_config file</b></li>
+        <ol start="1">
+              <li><b>sudo nano /etc/ssh/sshd_config</b> change port 22 to 2200 to prevent attacks on the default port</li>
+            <img src='picture/change_port.png' width="500" height="200">
+            <li>restart ssh</li>
+                <p> sudo service ssh restart </p>
+            <li>Configure the Uncomplicated Firewall (UFW) to allow only the incoming connection for SSH (port 2200), HTTP (port 80), and NTP (port 123)
+                <p>sudo ufw status
+                <p>sudo ufw default deny incoming</p>
+                <p>sudo ufw default allow outgoing</p>
+                <p>sudo ufw allow ssh</p>
+                <p>sudo ufw allow 2200/tcp</p>
+                <p>sudo ufw allow 80/tcp </p>
+                <p>sudo ufw allow 123/udp</p>
+                <p>sudo ufw deny 22 </p>
+                <p>sudo ufw enable</p>
+                <p>sudo ufw status</p>
+           <li>Back AWS lightsail => Networking tab</li>
+                <p>add more rule on the firewall</p>
+                <img src="picture/change_firewall.png" width="500" height="200">
+          
+        </ol>
+        <p><b>Note:</b>From the local machine (terminal), execute <b>ssh -i ~/.ssh/udacity_key.rsa -p 2200 ubuntu@34.221.39.98</b> where <b>34.221.39.98</b> is the IP address of the instance</p>
+        <p><b><i>Note:</i></b>when you run <b>ssh -i ~/.ssh/udacity_key.rsa -p 2200 ubuntu@34.221.39.98</b>, please make sure to include <b> -p 2200 </b> to it. It took me two days to figure out what I missed</p>
+
+    </ol>
+
+    <h1>STEP 4: Prevent hacker to attack your network. Use <b> Fail2Ban</b></h1>
+    <p><b>Fail2Ban</b> is protected computer servers from brute-force attakcs</p>
+    <ol start="1">
+        <li> Install Fail2Ban</li>
+            <p> sudo apt-get install fail2ban</p>
+        <li>Install sendmail for email notice</li>
+            <p>sudo apt-get install sendmail iptables-persistent </p>
+        <li>Copy of the file</li>
+            <p>sudo cp /etc/fail2ban/jail.conf /etc/fail2ban/jail.local</p>
+        <li>modify the jail.local file</li>
+            <ul>
+                <li>sudo nano /etc/fail2ban/jail.local </li>
+                <li>searching and replace the setting as below
+                    <p>set bantime=600</p>
+                    <p>destemail = useremail@domain (change it to your personal email address)</p>
+                    <img src="picture/destemail.png" width=500 height=200 >
+                    <p>action= %(action_mwl)s</p>
+                    <img src="picture/action.png" width=600 height=200 >
+                </li>
+                <li>Searching [sshd], change <b>port= ssh</b> by <b>port = 2200 </b></li> 
+                <img src="picture/sshd.png" width=300 height=200 >
+            </ul>
+        <li>Restart the service </li>
+            <p> sudo service fail2ban restart</p>
+    </ol>
+
+    <h1>STEP 4.1: Configure the automatically software update </h1>
+    <ol start="1">
+        <li>Enabled automatic security update by <b>unattended-upgrades</b></li>
+            <p>sudo apt-get install unattended-upgrades</p>
+        <li>Modify the unattended-upgrades</li>
+            <p>sudo nano /etc/apt/apt.conf.d/50unattended-upgrades</p>
+            <uL>
+                <li>uncomment the line: 
+                     "${distro_id}:${distro_codename}-updates";</li>
+            </uL>
+        <li>Modify auto-grade as follow</li>
+            <ul>
+                <li>sudo nano /etc/apt/apt.conf.d/20auto-upgrades </li>
+                <img src="picture/apt_upgrade.png" width="500" height="200">
+            </ul>
+        <li>Enabled the unattended-upgrades</li>
+            <p>sudo dpkg-reconfigure --priority=low unattended-upgrades</p>
+        <li>Restart Apache</li>
+
+    <h1>STEP 4.2: Update Most Recent </h1>
+    <ol start="1">
+        <p>Follow these command to update the most recent</p>
+        <li>sudo apt-get update</li>
+        <li>sudo apt-get dist-upgrade</li>
+        <li>sudo shutdown -r now </li>
+    </ol>
+
+    <p>Disconnect from host and logged back in </p>
+    <img src="picture/logged_in.png" width="450" height=250>
+
+<h1>STEP 5: Create <b>grader</b> username </h1>
+    <ol start="1">
+        <li>Under ubuntu logged in </li>
+            <ul>
+                <li>Add new <b>"grader"</b> username</li>
+                    <ul>
+                        <li>sudo adduser grader</li>
+                        <img src="picture/grader.png" width=500 height=300>
+                    </ul>
+            </ul>
+    </ol>
+
+    <h2>Provide <b>grader</b> access permission</h2>
+    <ol start="1">
+        <li>Modify the visudo</li>
+            <ul><li>sudo visudo</li>
+                <img src="picture/visudo.png" width=400 height=200 >
+            </ul>
+        <li>
+        <li>Search for this info:</li>
+            <ul><li>root  ALL=(ALL:ALL) ALL</li></ul>
+        <li>Add grader below root</li>
+            <ul><li>grader ALL=(ALL:ALL) ALL</li>
+                <img src="picture/add_grader.png" width=400 height=200>
+            </ul>
+        <li>Check to make <b>grader</b> has the correct access permission</li>
+            <ul>
+                <li>su - grader</li>
+                    <ul><li>password confirm</li></ul>
+                <li>sudo -l </li>
+                    <ul><li>password confirm</li></ul>
+                <img src="picture/check_grader.png" width=600 height=400>
+            </ul>
+
+    </ol>
+
+<h1>STEP 6: Using <b>ssh-keygen</b> to create SSH key pair</h1>
+    <ol start="1">
+        <li>On terminal (Local machine)</li>
+        <ul>
+            <li>run <b>ssh-keygen</b></li>
+            <li>Ask to save new filename as /home/ownername/grader_udacity_key. It store at <b>ls ~/.ssh</b></li>
+            <li>Two new filename created (grader_udacity_key and grader_udacity_key.pub) </li>
+            <li>Copy <b>grader_udacity_key.pub</b></li>
+                <ul><li>cat ~/.ssh/grader_udacity_key.pub</li></ul>
+            <li>Connect to virtual server (AWS lightsail)</li>
+        </ul>
+        <li>Connect to the host (virtual server AWS lightsail)</li>
+            <ul>
+                <li>Create <b>.ssh</b> new directory</li>
+                    <ul><li>mkdir .ssh (~/.ssh)</li></ul>
+                <li>Paste the <b>grader_udacity_key</b> at local machine to virtual server</li>
+                    <ul>
+                        <li>sudo nano ~/.ssh/authorized_keys</li>
+                        <img src="picture/auto_key.png" width="500" height=100>
+                        <li>copy the content and paste to the authorize_key</li>
+                            <ul><li>cat ~/.ssh/authorized_keys </li></ul>
+                    </ul>
+                <li>Prevent user change permssion</li>
+                    <ul>
+                        <li>sudo chmod 700 .ssh</li>
+                        <li>sudo chmod 644 .ssh/authorized_keys </li>
+                    </ul>
+                <li>Restart Service</li>
+                    <ul><li>sudo service ssh restart</li></ul>
+        <li>Back to the local machine (terminal)</li>
+            <ul><li>excecute</li>
+                <ul>
+                    <li>ssh -i ~/.ssh/grader_udacity_key -p 2200 grader@34.221.39.98</li>
+                    <img src="picture/test_grader.png" width=600 height=400>
+                </ul>
+            </ul>
+
+            </ul>
+
+<hr style="width="1px";>
+
+<h1 style="text-transform:capitalize; color: blue;"><b style="text-transform: uppercase;">step 7: </b> Configure UTC local time zone</h1>
+<ul>
+    <li>Log in as <code style="background-color:#9e9e9e4f">grader</code></li>
+    <uL><li>Time Zone configuration</li>
+        <li>sudo dpkg-reconfigure tzdata </li>
+        <img src="picture/time_zone.png" width=600 height=200>
+    </uL>
+</ul>
+
+<h1 style="text-transform:capitalize; color: blue;"><b style="text-transform: uppercase;">step 8: </b> apache installation and configuration</h1>
+<ul>
+    <li>Login as <code style="background-color: #9e9e9e4f">grader</code></li>
+    <ul>
+        <li>Apache installation command</li>
+        <ul><li>sudo apt-get install apache2</li></ul>
+        <li>Testing Apache after installation, open the browser and paste the AWS lightsail public IP address <code style="background-color: #9e9e9e4f">http://34.221.39.98/</code></li>
+        <img src="picture/apache_test.png" width=600 height=200>
+    </ul>
+    <li>Install mod_wsgi package for python3</li>
+    <ul><li>sudo apt-get install libapache2-mod-wsgi-py3</li>
+        <img src="picture/mod_wsgi.png" width=500 height=200>
+    </ul>
+    <li>Should be <code style="background-color:#9e9e9e4f">mod_wsgi</code> enabled</li>
+        <ul><li>sudo a2enmod wsgi</li>
+            <img src="picture/enable_mod.png" width=600 height=150>
+        </ul>
+</ul>
+
+<h1 style="text-transform:capitalize; color: blue;"><b style="text-transform: uppercase;">step 9: </b> PostgreSQL installation and configuration</h1>
+<ul>
+    <li>Still log in as <code style="background-color:#9e9e9e4f">grader</code></li>
+    <ul><li>PostgreSQL installation</li>
+        <ul><li>sudo apt-get install postgresql</li></ul>
+    </ul>
+    <li>Switch to <code style="background-color:#9e9e9e4f">Postgres</code></li>
+        <ul><li> sudo su - postgres</li></ul>
+    <li>use the command <code style="background-color:#9e9e9e4f">psql</code> to open PostgreSQL terminal</li>
+    <img src="picture/postgresql.png" width=600 height=150>
+    <li>Create <code style="background-color:#9e9e9e4f">catalog</code> role and allow user to create the database</li>
+    <img src="picture/create_catalog.png" width=600 height=200>
+    <li>Quit the current PostgreSQL terminal <code style="background-color:#9e9e9e4f">\q</code></li>
+    <li>Back to the <code style="background-color:#9e9e9e4f">grade</code> terminal <code style="background-color:#9e9e9e4f">exit</code></li>
+    <li>Create <code style="background-color:#9e9e9e4f">catalog</code> as we did for the <code style="background-color:#9e9e9e4f">grader</code></li>
+        <ul>
+            <li>sudo adduser catalog<li>
+            <img src="picture/catalog_linux.png" width=400 height=200>
+        </ul>
+    <li>Run <code style="background-color:#9e9e9e4f">sudo visudo</code> and add <code style="background-color:#9e9e9e4f">catalog ALL=(ALL:ALL) ALL</code> as image below
+    <img src="picture/catalog_config.png" width=600 height=200>
+    <li>Verify catalog permission as image below</li>
+    <img src="picture/verify_catalog.png" width=500 height=250>
+    <li>Log in as <code style="background-color:#9e9e9e4f">catalog</code> and follow step below </li>
+    <img src="picture/in_catalog.png" width=600 height=250>
+
+
+<h1 style="text-transform:capitalize; color: blue;"><b style="text-transform: uppercase;">step 10: </b> Git Instalation</h1>
+<ul>
+    <li>Log in as <code style="background-color:#9e9e9e4f">grader</code></li>
+    <img src="picture/git_install.png" width=600 height=250>
+
+
+
