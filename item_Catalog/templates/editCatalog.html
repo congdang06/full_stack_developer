@@ -1,6 +1,7 @@
 {% extends "main_layout.html" %}
 
 {% block content %}
+    {% include "flash_alert_message.html" %}
     <h3 class='catalog_header'>edit catalog </h3>
     <div class="panel panel-default ">
         <div class="panel-body new_catalog">
@@ -20,11 +21,11 @@
                                         Edit Catalog
                                     </button>
 
-                                    <button class="btn btn-info btn-md">
-                                        <span class="glyphicon glyphicon-eye-close area-hidden="true"></span>
-                                        <a href="{{ url_for('showCatalogs') }}">
-                                        Back to Catalog </a>
-                                    </button>
+                                    <a href="{{url_for('showCatalogs') }}">
+                                        <button type='button' class="btn btn-info" aria-label="Left Aling">
+                                            <span class="glyphicon glyphicon-cancel" aria-hidden="true"></span>Cancel
+                                        </button>
+                                    </a>
                                 </div>
                             </div>
                         </div>

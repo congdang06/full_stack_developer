@@ -1,5 +1,5 @@
-from flask import Flask, render_template, request,\
-             redirect, jsonify, url_for, flash
+from flask import Flask, render_template, request, redirect, \
+    jsonify, url_for, flash
 from sqlalchemy import create_engine, asc
 from sqlalchemy.orm import sessionmaker
 from database_setup import Base, Catalog, ItemCatalog, User
@@ -23,8 +23,8 @@ APPLICATION_NAME = 'Item Catalog Application'
 
 
 # Connect to the database and create database session
-engine = create_engine('sqlite:///itemcatalogwithloginusers.db'
-                       + '?check_same_thread=False')
+engine = create_engine(
+    'sqlite:///itemcatalogwithloginusers.db' + '?check_same_thread=False')
 Base.metadata.bind = engine
 
 
@@ -97,6 +97,8 @@ def with_session(fn):
 
 
 """SHOW CATALOGS """
+
+
 @app.route('/')
 @app.route('/catalog/')
 def showCatalogs():
@@ -120,12 +122,17 @@ def showCatalogs():
 
 
 """ CREATE A NEW CATALOG """
+
+
 @app.route('/catalog/new', methods=['GET', 'POST'])
 def newCatalog():
     # if user is not login return login credentials
     if 'username' not in login_session:
         return redirect('/login')
     if request.method == 'POST':
+        if not request.form['name']:
+            flash("Name can not be blank.", 'error')
+            return render_template('newCatalog.html')
         newCatalog = Catalog(
             name=request.form['name'],
             user_id=login_session['user_id'])
@@ -151,6 +158,9 @@ def editCatalog(catalog_id):
                 </script> \
             <body onload = 'myEditCatalog()'>"
     if request.method == 'POST':
+        if not request.form['name']:
+            flash("Name can not be blank")
+            return render_template('editCatalog.html', catalog=edit_Catalog)
         if request.form['name']:
             edit_Catalog.name = request.form['name']
             flash('Catalog %s Was Successfully Editted' % edit_Catalog.name)
@@ -237,10 +247,15 @@ def showSpecificCategoryItems(catalog_id):
         items=items)
 
 # NEW ITEM CATALOG
+
+
 @app.route('/catalog/item/new', methods=['GET', 'POST'])
 def newItemCatalog():
     catalogs = session.query(Catalog).all()
     if request.method == 'POST':
+        if not request.form['name'] or not request.form['description']:
+            flash('Either Item Name or Description can not be blank')
+            return render_template('newItemCatalog.html', catalogs=catalogs)
         newItem = ItemCatalog(
             name=request.form['name'],
             description=request.form['description'],
@@ -274,6 +289,15 @@ def editItemCatalog(catalog_id, item_catalog_id):
                 </script>\
                 <body onload='myEditItem()'>"
     if request.method == 'POST':
+        if not request.form['name'] or not request.form['description']:
+            flash('Either Item Name or Description can not be blank')
+            return render_template(
+                'editItemCatalog.html',
+                catalog_id=catalog_id,
+                item_catalog_id=item_catalog_id,
+                catalogs=catalogs,
+                catalog=catalog,
+                item=editItemCatalog)
         if request.form['name']:
             editItemCatalog.name = request.form['name']
         if request.form['description']:
@@ -328,6 +352,8 @@ def deleteItemCatalog(catalog_id, item_catalog_id):
 ***************************************************************************"""
 
 # Create anti-forgery state token
+
+
 @app.route('/login')
 def showLogin():
     state = ''.join(random.choice(string.ascii_uppercase + string.digits)
@@ -358,6 +384,8 @@ def logout():
         return redirect(url_for('showCatalogs'))
 
 # CONNECT - Google login token
+
+
 @app.route('/gconnect', methods=['POST'])
 def gconnect():
     # Validate state token
